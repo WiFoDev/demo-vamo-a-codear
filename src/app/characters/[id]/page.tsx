@@ -1,11 +1,12 @@
 import Image from "next/image"
 import Link from "next/link"
+import {notFound} from "next/navigation"
 
 async function getCharacterById(id: string) {
   const res = await fetch(`https://api.sampleapis.com/futurama/characters/${id}`)
 
   if (!res.ok) {
-    throw new Error(`Error fetching character ${id}`)
+    return {noCharacter: true}
   }
 
   return res.json()
@@ -34,7 +35,9 @@ export async function generateStaticParams() {
 }
 
 export default async function CharacterPage({params: {id}}: CharacterPageParams) {
-  const {name, images} = await getCharacterById(id)
+  const {name, images, noCharacter} = await getCharacterById(id)
+
+  if (noCharacter) notFound()
 
   return <div>
     <h1>{name.first}</h1>
