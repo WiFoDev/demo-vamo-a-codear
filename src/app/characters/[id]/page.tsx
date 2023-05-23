@@ -17,6 +17,22 @@ interface CharacterPageParams {
   }
 }
 
+export async function generateStaticParams() {
+  const res = await fetch('https://api.sampleapis.com/futurama/characters')
+
+  if (!res.ok) {
+    throw new Error(`Error fetching characters`)
+  }
+
+  const characters: Array<{}> = await res.json()
+
+  return characters.map((character: any, index) => {
+    return {
+      id: `${index + 1}`,
+    }
+  })
+}
+
 export default async function CharacterPage({params: {id}}: CharacterPageParams) {
   const {name, images} = await getCharacterById(id)
 
